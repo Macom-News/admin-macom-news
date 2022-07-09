@@ -108,7 +108,6 @@ const Writers: React.FC = () => {
         setSearchWriters(response.data);
       } catch (err) {
         alert('Ops! Algo inesperado ocorreu, tente novamente');
-        console.log(err);
       }
     }
 
