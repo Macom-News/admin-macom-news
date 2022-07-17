@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -110,6 +110,10 @@ const CreatePlan: React.FC = () => {
     },
     [price, selectedIntervalType],
   );
+
+  useEffect(() => {
+    document.title = 'Cadastrar plano';
+  }, []);
 
   return (
     <Container>

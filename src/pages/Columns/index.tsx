@@ -103,6 +103,10 @@ const Columns: React.FC = () => {
   );
 
   useEffect(() => {
+    document.title = 'Colunas';
+  }, []);
+
+  useEffect(() => {
     async function loadColumns() {
       try {
         if (user.type === 'user' && user.is_admin) {

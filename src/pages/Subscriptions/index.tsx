@@ -75,7 +75,7 @@ const Subscriptions: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    document.title = 'Assinatura';
+    document.title = 'Assinaturas';
   }, []);
 
   useEffect(() => {

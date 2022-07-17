@@ -135,6 +135,10 @@ const EditPlan: React.FC = () => {
   );
 
   useEffect(() => {
+    document.title = 'Editar plano';
+  }, []);
+
+  useEffect(() => {
     async function loadPlan() {
       try {
         const response = await api.get(`/plans/show/${plan_id}`);

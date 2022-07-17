@@ -108,7 +108,7 @@ const SocialAction: React.FC = () => {
   );
 
   useEffect(() => {
-    document.title = 'Notícias';
+    document.title = 'Ação social';
   }, []);
 
   useEffect(() => {
