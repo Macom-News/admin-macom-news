@@ -88,7 +88,7 @@ const EditNews: React.FC = () => {
 
   const [title, setTitle] = useState('');
   const [publicationScheduleDate, setPublicationScheduleDate] = useState('');
-  const [levelNews, setLevelNews] = useState(0);
+  const [levelNews, setLevelNews] = useState('GERAL');
   const [content1, setContent1] = useState('');
   const [content2, setContent2] = useState('');
 
@@ -118,6 +118,7 @@ const EditNews: React.FC = () => {
   const handleSaveContent = useCallback(async () => {
     try {
       setIsLoadingContentSaveButton(true);
+      const infoLevelData = levelNews.toUpperCase();
 
       if (title === '') {
         alert('Informe o título da notícia');
@@ -125,7 +126,43 @@ const EditNews: React.FC = () => {
       } else if (publicationScheduleDate === '') {
         alert('Informe a data de publicação');
         setIsLoadingContentSaveButton(false);
-      } else if (content1 !== '') {
+      } else if (infoLevelData !== 'GERAL') {
+        if (Number.isNaN(infoLevelData)) {
+          alert(
+            'Nível da notícia incorreto. Informe Geral ou um número representando o nível',
+          );
+          setIsLoadingContentSaveButton(false);
+        } else if (content1 === '') {
+          alert('Informe o conteúdo da notícia');
+          setIsLoadingContentSaveButton(false);
+        } else {
+          const level = infoLevelData === 'GERAL' ? 0 : Number(infoLevelData);
+
+          const data = {
+            id: news_id,
+            title,
+            content_1: content1,
+            content_2: content2 || null,
+            user_id: user.id,
+            publication_schedule_date: publicationScheduleDate,
+            level,
+          };
+
+          const response = await api.put('/news', data);
+
+          if (response.status === 200) {
+            setNews(response.data);
+            alert('Informações atualizadas');
+          }
+
+          setIsLoadingContentSaveButton(false);
+        }
+      } else if (content1 === '') {
+        alert('Informe o conteúdo da notícia');
+        setIsLoadingContentSaveButton(false);
+      } else {
+        const level = infoLevelData === 'GERAL' ? 0 : Number(infoLevelData);
+
         const data = {
           id: news_id,
           title,
@@ -133,13 +170,14 @@ const EditNews: React.FC = () => {
           content_2: content2 || null,
           user_id: user.id,
           publication_schedule_date: publicationScheduleDate,
-          level: levelNews,
+          level,
         };
 
         const response = await api.put('/news', data);
 
         if (response.status === 200) {
           setNews(response.data);
+          alert('Informações atualizadas');
         }
 
         setIsLoadingContentSaveButton(false);
@@ -281,6 +319,8 @@ const EditNews: React.FC = () => {
 
         if (response.status === 200) {
           const newsData = response.data as INews;
+          const levelFormatted =
+            newsData.level === 0 ? 'GERAL' : String(newsData.level);
 
           setNews(newsData);
 
@@ -288,7 +328,7 @@ const EditNews: React.FC = () => {
           setPublicationScheduleDate(
             newsData.publication_schedule_date.toString(),
           );
-          setLevelNews(newsData.level);
+          setLevelNews(levelFormatted);
           setContent1(newsData.content_1);
           setContent2(newsData.content_2);
           setPreviewImageTop(newsData.image_1_url);
@@ -342,7 +382,7 @@ const EditNews: React.FC = () => {
                 <input
                   type="text"
                   placeholder="Título"
-                  defaultValue={title}
+                  value={title}
                   onChange={event => setTitle(event.target.value)}
                 />
               </ContainerTitleInput>
@@ -350,7 +390,7 @@ const EditNews: React.FC = () => {
               <ContainerDateInput>
                 <input
                   type="date"
-                  defaultValue={publicationScheduleDate}
+                  value={publicationScheduleDate}
                   onChange={event =>
                     setPublicationScheduleDate(event.target.value)
                   }
@@ -359,11 +399,10 @@ const EditNews: React.FC = () => {
 
               <ContainerLevelInput>
                 <input
-                  type="number"
+                  type="text"
                   placeholder="Nível a qual a notícia se destina"
                   value={levelNews}
-                  min="0"
-                  onChange={event => setLevelNews(Number(event.target.value))}
+                  onChange={event => setLevelNews(event.target.value)}
                 />
               </ContainerLevelInput>
 

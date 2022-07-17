@@ -107,7 +107,7 @@ const News: React.FC = () => {
   );
 
   useEffect(() => {
-    document.title = 'Notícias';
+    document.title = 'Editar notícia';
   }, []);
 
   useEffect(() => {

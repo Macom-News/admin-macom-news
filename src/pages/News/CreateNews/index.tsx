@@ -77,7 +77,7 @@ const CreateNews: React.FC = () => {
   const [publicationScheduleDate, setPublicationScheduleDate] = useState(
     format(new Date(), 'yyyy-MM-dd'),
   );
-  const [levelNews, setLevelNews] = useState(0);
+  const [levelNews, setLevelNews] = useState('Geral');
   const [content1, setContent1] = useState('');
   const [content2, setContent2] = useState('');
 
@@ -107,6 +107,7 @@ const CreateNews: React.FC = () => {
   const handleSaveContent = useCallback(async () => {
     try {
       setIsLoadingContentSaveButton(true);
+      const infoLevelData = levelNews.toUpperCase();
 
       if (title === '') {
         alert('Informe o título da notícia');
@@ -114,20 +115,50 @@ const CreateNews: React.FC = () => {
       } else if (publicationScheduleDate === '') {
         alert('Informe a data de publicação');
         setIsLoadingContentSaveButton(false);
-      } else if (content1 !== '') {
+      } else if (infoLevelData !== 'GERAL') {
+        if (Number.isNaN(infoLevelData)) {
+          alert(
+            'Nível da notícia incorreto. Informe Geral ou um número representando o nível',
+          );
+          setIsLoadingContentSaveButton(false);
+        } else if (content1 === '') {
+          alert('Informe o conteúdo da notícia');
+          setIsLoadingContentSaveButton(false);
+        } else {
+          const level = infoLevelData === 'GERAL' ? 0 : Number(infoLevelData);
+
+          const data = {
+            title,
+            content_1: content1,
+            content_2: content2 || null,
+            user_id: user.id,
+            publication_schedule_date: publicationScheduleDate,
+            level,
+          };
+
+          const response = await api.post('/news', data);
+          setNews(response.data);
+          handleImageTopFocus();
+          setIsLoadingContentSaveButton(false);
+        }
+      } else if (content1 === '') {
+        alert('Informe o conteúdo da notícia');
+        setIsLoadingContentSaveButton(false);
+      } else {
+        const level = infoLevelData === 'GERAL' ? 0 : Number(infoLevelData);
+
         const data = {
           title,
           content_1: content1,
           content_2: content2 || null,
           user_id: user.id,
           publication_schedule_date: publicationScheduleDate,
-          level: levelNews,
+          level,
         };
 
         const response = await api.post('/news', data);
         setNews(response.data);
         handleImageTopFocus();
-
         setIsLoadingContentSaveButton(false);
       }
     } catch (err) {
@@ -307,12 +338,11 @@ const CreateNews: React.FC = () => {
 
               <ContainerLevelInput>
                 <input
-                  type="number"
+                  type="text"
                   placeholder="Nível a qual a notícia se destina"
                   value={levelNews}
-                  min="0"
                   disabled={!!news}
-                  onChange={event => setLevelNews(Number(event.target.value))}
+                  onChange={event => setLevelNews(event.target.value)}
                 />
               </ContainerLevelInput>
 
