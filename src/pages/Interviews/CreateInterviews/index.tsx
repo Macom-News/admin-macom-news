@@ -105,15 +105,12 @@ const CreateInterviews: React.FC = () => {
       if (title === '') {
         alert('Informe o título da entrevista');
         setIsLoadingContentSaveButton(false);
-      } else if (video === '') {
-        alert('Informe o link do vídeo da entrevista');
-        setIsLoadingContentSaveButton(false);
       } else if (content1 !== '') {
         const data = {
           title,
           content_1: content1,
           content_2: content2 || null,
-          video,
+          video: video || null,
           user_id: user.id,
         };
 
