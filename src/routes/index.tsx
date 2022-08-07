@@ -50,9 +50,13 @@ import { EditPlan } from '../pages/Plans/EditPlan';
 // ASSINATURAS
 import { Subscriptions } from '../pages/Subscriptions';
 
+// TERMS
+import { TermsOfUse } from '../pages/TermOfUse';
+
 const Routes: React.FC = () => (
   <Switch>
     <Route path="/" exact component={SignIn} />
+    <Route path="/termosdeuso" component={TermsOfUse} />
 
     <Route path="/dashboard" component={Dashboard} isPrivate />
     <Route path="/configuracoes" component={Configuration} isPrivate />
