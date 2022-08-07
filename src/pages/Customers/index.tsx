@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
-import { FiSearch, FiEdit } from 'react-icons/fi';
+import { FiSearch, FiEdit, FiArchive } from 'react-icons/fi';
 
 import axios, { AxiosError } from 'axios';
 import { api } from '../../services/api';
@@ -54,6 +54,13 @@ const Customers: React.FC = () => {
   const handleEditCustomerSubscription = useCallback(
     async (customer_id: string) => {
       location.push(`/assinaturas/editar/${customer_id}`);
+    },
+    [location],
+  );
+
+  const handleViewCustomer = useCallback(
+    async (id: string) => {
+      location.push(`/clientes/editar/${id}`);
     },
     [location],
   );
@@ -135,6 +142,13 @@ const Customers: React.FC = () => {
                             customer.client_id_payment,
                           )
                         }
+                      />
+                    </button>
+
+                    <button type="button">
+                      <FiArchive
+                        size={20}
+                        onClick={() => handleViewCustomer(customer.id)}
                       />
                     </button>
                   </td>

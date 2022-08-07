@@ -24,6 +24,7 @@ import { CreateColumns } from '../pages/Columns/CreateColumn';
 
 // CUSTOMERS
 import { Customers } from '../pages/Customers';
+import { EditCustomers } from '../pages/Customers/EditCustomers';
 
 // NEWS
 import { News } from '../pages/News';
@@ -56,7 +57,8 @@ const Routes: React.FC = () => (
     <Route path="/dashboard" component={Dashboard} isPrivate />
     <Route path="/configuracoes" component={Configuration} isPrivate />
 
-    <Route path="/clientes" component={Customers} isPrivate />
+    <Route path="/clientes" exact component={Customers} isPrivate />
+    <Route path="/clientes/editar/:id+" component={EditCustomers} isPrivate />
 
     <Route path="/colunistas" component={Writers} exact isPrivate />
     <Route path="/colunistas/criar" component={CreateWriter} isPrivate />
