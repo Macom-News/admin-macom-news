@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useRef,
   useMemo,
+  ChangeEvent,
 } from 'react';
 
 import { useHistory } from 'react-router-dom';
@@ -27,7 +28,13 @@ import {
   ContainerTitleInput,
   ContentEditor,
   BoxContent,
+  HeaderForm,
+  ContentImage,
 } from './styles';
+
+interface IColumns {
+  id: string;
+}
 
 const CreateColumns: React.FC = () => {
   const { user, updateToken } = useAuth();
@@ -52,6 +59,8 @@ const CreateColumns: React.FC = () => {
     };
   }, []);
 
+  const [columns, setColumns] = useState<IColumns>();
+
   const [isLoadingContent, setIsLoadingContent] = useState(false);
   const [title, setTitle] = useState('');
   const [contentText, setContentText] = useState('');
@@ -61,11 +70,16 @@ const CreateColumns: React.FC = () => {
 
   const [isLoadingContentSaveButton, setIsLoadingContentSaveButton] =
     useState(false);
-  const [isLoadingImageTopSaveButton, setIsLoadingImageTopSaveButton] =
+  const [isLoadingImageColumnSaveButton, setIsLoadingImageColumnSaveButton] =
     useState(false);
 
   const [imageColumn, setImageColumn] = useState<File>();
   const [previewImageColumn, setPreviewImageColumn] = useState('');
+
+  const handleTextFocus = useCallback(() => {
+    setIsContentFocus(true);
+    setIsImageFocus(false);
+  }, []);
 
   const handleImageColumnFocus = useCallback(() => {
     setIsContentFocus(false);
@@ -86,10 +100,12 @@ const CreateColumns: React.FC = () => {
           writer_id: user.id,
         };
 
-        await api.post('/writers_columns', data);
+        const response = await api.post('/writers_columns', data);
+        setColumns(response.data);
+        handleImageColumnFocus();
         setIsLoadingContent(false);
+
         alert('Coluna cadastrada com sucesso!');
-        history.goBack();
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -108,7 +124,48 @@ const CreateColumns: React.FC = () => {
         }
       }
     }
-  }, [contentText, title, updateToken, user.id, history]);
+  }, [title, contentText, user.id, handleImageColumnFocus, updateToken]);
+
+  const handleSelectedImageColumn = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      if (!event.target.files) {
+        return;
+      }
+
+      const image = event.target.files[0];
+      setImageColumn(image);
+
+      setPreviewImageColumn(URL.createObjectURL(image));
+    },
+    [],
+  );
+
+  const handleImageColumnSave = useCallback(async () => {
+    try {
+      setIsLoadingImageColumnSaveButton(true);
+
+      if (!imageColumn) {
+        alert('Selecione uma imagem');
+        setIsLoadingImageColumnSaveButton(false);
+
+        return;
+      }
+
+      if (columns) {
+        const data = new FormData();
+        data.append('id', columns.id);
+        data.append('image', imageColumn);
+
+        await api.patch('/writers_columns/upload', data);
+        setIsLoadingImageColumnSaveButton(false);
+        alert('Imagem salva com sucesso');
+        history.goBack();
+      }
+    } catch (err) {
+      setIsLoadingImageColumnSaveButton(false);
+      alert('Ops! Não foi possível enviar a imagem, tente novamente');
+    }
+  }, [imageColumn, columns, history]);
 
   useEffect(() => {
     document.title = 'Cadastrar coluna';
@@ -122,29 +179,84 @@ const CreateColumns: React.FC = () => {
         <HeaderContent title="Cadastrar coluna" />
 
         <Box>
-          <ContentEditor>
-            <ContainerTitleInput>
+          <HeaderForm>
+            <button
+              type="button"
+              className={isContentFocus ? 'active' : ''}
+              onClick={handleTextFocus}
+            >
+              Conteúdo
+            </button>
+
+            <button
+              type="button"
+              className={isImageFocus ? 'active' : ''}
+              disabled={!columns}
+              onClick={handleImageColumnFocus}
+            >
+              Imagem
+            </button>
+          </HeaderForm>
+
+          {isContentFocus && (
+            <ContentEditor>
+              <p className="success" hidden={!columns}>
+                Cadastro realizado com sucesso
+              </p>
+
+              <ContainerTitleInput>
+                <input
+                  type="text"
+                  placeholder="Título"
+                  value={title}
+                  disabled={!!columns}
+                  onChange={event => setTitle(event.target.value)}
+                />
+              </ContainerTitleInput>
+
+              <BoxContent>
+                <JoditEditor
+                  ref={contentTextRef}
+                  value={contentText}
+                  config={config}
+                  onBlur={content => setContentText(content)}
+                />
+              </BoxContent>
+
+              {!columns && (
+                <Button loading={isLoadingContent} onClick={handleSaveContent}>
+                  Salvar conteúdo
+                </Button>
+              )}
+            </ContentEditor>
+          )}
+
+          {isImageFocus && (
+            <ContentImage>
+              <label htmlFor="imageColumn">
+                <div className="image-container">
+                  {previewImageColumn && (
+                    <img src={previewImageColumn} alt="Coluna - Maçom News" />
+                  )}
+
+                  {!previewImageColumn && <p>Selecione uma imagem</p>}
+                </div>
+              </label>
+
               <input
-                type="text"
-                placeholder="Título"
-                value={title}
-                onChange={event => setTitle(event.target.value)}
+                type="file"
+                id="imageColumn"
+                onChange={handleSelectedImageColumn}
               />
-            </ContainerTitleInput>
 
-            <BoxContent>
-              <JoditEditor
-                ref={contentTextRef}
-                value={contentText}
-                config={config}
-                onBlur={content => setContentText(content)}
-              />
-            </BoxContent>
-
-            <Button loading={isLoadingContent} onClick={handleSaveContent}>
-              Salvar conteúdo
-            </Button>
-          </ContentEditor>
+              <Button
+                loading={isLoadingImageColumnSaveButton}
+                onClick={handleImageColumnSave}
+              >
+                Salvar imagem
+              </Button>
+            </ContentImage>
+          )}
         </Box>
       </Content>
     </Container>

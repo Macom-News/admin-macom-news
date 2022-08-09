@@ -214,3 +214,41 @@ export const ContainerLevelInput = styled.div`
 `;
 
 export const BoxContent = styled.div``;
+
+export const ContentImage = styled.div`
+  width: 75%;
+
+  margin-top: 2rem;
+
+  margin-bottom: 5rem;
+
+  div.image-container {
+    width: 100%;
+    height: 30rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-bottom: 3rem;
+
+    border: 1px solid #121214;
+
+    cursor: pointer;
+
+    img {
+      width: 100%;
+      height: 30rem;
+      object-fit: cover;
+    }
+
+    p {
+      font-size: 3rem;
+    }
+  }
+
+  input[type='file'] {
+    visibility: hidden;
+    display: none;
+  }
+`;
