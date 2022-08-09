@@ -56,6 +56,22 @@ const CreateColumns: React.FC = () => {
   const [title, setTitle] = useState('');
   const [contentText, setContentText] = useState('');
 
+  const [isContentFocus, setIsContentFocus] = useState(true);
+  const [isImageFocus, setIsImageFocus] = useState(false);
+
+  const [isLoadingContentSaveButton, setIsLoadingContentSaveButton] =
+    useState(false);
+  const [isLoadingImageTopSaveButton, setIsLoadingImageTopSaveButton] =
+    useState(false);
+
+  const [imageColumn, setImageColumn] = useState<File>();
+  const [previewImageColumn, setPreviewImageColumn] = useState('');
+
+  const handleImageColumnFocus = useCallback(() => {
+    setIsContentFocus(false);
+    setIsImageFocus(true);
+  }, []);
+
   const handleSaveContent = useCallback(async () => {
     try {
       setIsLoadingContent(true);

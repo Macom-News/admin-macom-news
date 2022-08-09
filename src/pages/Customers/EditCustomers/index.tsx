@@ -15,6 +15,7 @@ import {
   ContainerInformations,
   ContainerNameText,
   ContainerCheckBox,
+  ContainerImage,
 } from './styles';
 
 interface IRouteMatchParams {
@@ -192,18 +193,18 @@ const EditCustomers: React.FC = () => {
                       <p>{customer.whatsapp_master_emporium}</p>
                     </ContainerNameText>
 
-                    <ContainerNameText>
+                    <ContainerImage>
                       <label htmlFor="imageCimcard">
-                        <div>
+                        <div className="image-container">
                           {customer.photo_cimcard_url && (
                             <img
                               src={customer.photo_cimcard_url}
-                              alt="Maçom News"
+                              alt="Foto CimCard"
                             />
                           )}
                         </div>
                       </label>
-                    </ContainerNameText>
+                    </ContainerImage>
                   </>
                 )}
               </ContainerInformations>

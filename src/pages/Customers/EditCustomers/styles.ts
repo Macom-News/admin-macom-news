@@ -96,3 +96,28 @@ export const ContainerCheckBox = styled.div`
     margin-left: 5rem;
   }
 `;
+
+export const ContainerImage = styled.div`
+  width: 50%;
+
+  margin-top: 2rem;
+
+  margin-bottom: 5rem;
+
+  div.image-container {
+    width: 100%;
+    height: 25rem;
+
+    margin-bottom: 1rem;
+
+    border: 1px solid #121214;
+
+    cursor: pointer;
+
+    img {
+      width: 100%;
+      height: 30rem;
+      object-fit: cover;
+    }
+  }
+`;
