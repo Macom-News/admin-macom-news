@@ -100,15 +100,15 @@ export const ContainerCheckBox = styled.div`
 `;
 
 export const BoxSubscriptionActiveSuspended = styled.div`
-  margin-top: -45px;
-  margin-left: -70%;
+  margin-top: 10px;
+  margin-left: 45px;
   margin-bottom: 20px;
 `;
 
 export const ButtonChangeEnabledCustomer = styled.button`
   background-color: var(--orange);
-  width: 200%;
-  height: 30px;
+  width: 350px;
+  height: 40px;
 
   border: 0;
   border-radius: 10px;
@@ -130,13 +130,11 @@ export const ContainerImage = styled.div`
 
   margin-top: 2rem;
 
-  margin-bottom: 5rem;
+  margin-bottom: 3rem;
 
   div.image-container {
     width: 100%;
     height: 25rem;
-
-    margin-bottom: 1rem;
 
     border: 1px solid #121214;
 
@@ -146,6 +144,20 @@ export const ContainerImage = styled.div`
       width: 100%;
       height: 30rem;
       object-fit: cover;
+    }
+
+    label {
+      width: 14rem;
+      height: 14rem;
+
+      cursor: pointer;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      margin: 0 auto;
+      margin-top: 50px;
     }
   }
 `;

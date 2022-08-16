@@ -2,6 +2,8 @@ import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 
 import axios, { AxiosError } from 'axios';
+import { FiCamera, FiCameraOff } from 'react-icons/fi';
+import { border } from 'polished';
 import { api } from '../../../services/api';
 
 import { Header } from '../../../components/Header';
@@ -85,16 +87,6 @@ const EditCustomers: React.FC = () => {
             setIsLoading(false);
             setCustomer(customerData);
             alert('Cliente ativo!');
-          }
-        } else {
-          const response = await api.put(`/customers_profile/${customer.id}`);
-
-          if (response.status === 200) {
-            const customerData = response.data;
-
-            setIsLoading(false);
-            setCustomer(customerData);
-            alert('Cliente suspenso!');
           }
         }
       }
@@ -208,14 +200,6 @@ const EditCustomers: React.FC = () => {
                   </label>
                 </ContainerCheckBox>
 
-                <BoxSubscriptionActiveSuspended>
-                  <ButtonChangeEnabledCustomer
-                    onClick={handleActiveSuspendCustomer}
-                  >
-                    Atualizar
-                  </ButtonChangeEnabledCustomer>
-                </BoxSubscriptionActiveSuspended>
-
                 {customer.is_freemason && (
                   <>
                     <ContainerNameText>
@@ -254,17 +238,27 @@ const EditCustomers: React.FC = () => {
                     </ContainerNameText>
 
                     <ContainerImage>
-                      <label htmlFor="imageCimcard">
-                        <div className="image-container">
-                          {customer.photo_cimcard_url && (
-                            <img
-                              src={customer.photo_cimcard_url}
-                              alt="Foto CimCard"
-                            />
-                          )}
-                        </div>
-                      </label>
+                      <div className="image-container">
+                        {customer.photo_cimcard_url ? (
+                          <img
+                            src={customer.photo_cimcard_url}
+                            alt="Imagem do CimCard"
+                          />
+                        ) : (
+                          <label>
+                            <FiCameraOff size={50} />
+                          </label>
+                        )}
+                      </div>
                     </ContainerImage>
+
+                    <BoxSubscriptionActiveSuspended>
+                      <ButtonChangeEnabledCustomer
+                        onClick={handleActiveSuspendCustomer}
+                      >
+                        Atualizar
+                      </ButtonChangeEnabledCustomer>
+                    </BoxSubscriptionActiveSuspended>
                   </>
                 )}
               </ContainerInformations>
