@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
-import { FiSearch, FiEdit, FiArchive } from 'react-icons/fi';
+import { FiSearch, FiDollarSign, FiArchive, FiEdit } from 'react-icons/fi';
 
 import axios, { AxiosError } from 'axios';
 import { api } from '../../services/api';
@@ -135,7 +135,7 @@ const Customers: React.FC = () => {
 
                   <td>
                     <button type="button">
-                      <FiEdit
+                      <FiDollarSign
                         size={20}
                         onClick={() =>
                           handleEditCustomerSubscription(
@@ -146,7 +146,7 @@ const Customers: React.FC = () => {
                     </button>
 
                     <button type="button">
-                      <FiArchive
+                      <FiEdit
                         size={20}
                         onClick={() => handleViewCustomer(customer.id)}
                       />

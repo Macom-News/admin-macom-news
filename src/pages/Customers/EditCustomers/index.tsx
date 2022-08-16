@@ -16,6 +16,8 @@ import {
   ContainerNameText,
   ContainerCheckBox,
   ContainerImage,
+  BoxSubscriptionActiveSuspended,
+  ButtonChangeEnabledCustomer,
 } from './styles';
 
 interface IRouteMatchParams {
@@ -55,12 +57,60 @@ const EditCustomers: React.FC = () => {
   const { params } = useRouteMatch<IRouteMatchParams>();
   const { id } = params;
 
+  const [isLoading, setIsLoading] = useState(false);
   const [customer, setCustomer] = useState<ICustomer>();
-  const [previewImageCimcard, setPreviewImageCimcard] = useState('');
+
+  const [checkedActiveSuspend, setCheckedActiveSuspend] = useState(false);
+
+  // FUNCTIONS
+  const toggleActiveSuspend = useCallback(() => {
+    setCheckedActiveSuspend(oldState => !oldState);
+  }, []);
 
   useEffect(() => {
     document.title = 'Informações do cliente';
   }, []);
+
+  const handleActiveSuspendCustomer = useCallback(async () => {
+    try {
+      if (customer) {
+        setIsLoading(true);
+
+        if (checkedActiveSuspend) {
+          const response = await api.put(`/customers_profile/${customer.id}`);
+
+          if (response.status === 200) {
+            const customerData = response.data;
+
+            setIsLoading(false);
+            setCustomer(customerData);
+            alert('Cliente ativo!');
+          }
+        } else {
+          const response = await api.put(`/customers_profile/${customer.id}`);
+
+          if (response.status === 200) {
+            const customerData = response.data;
+
+            setIsLoading(false);
+            setCustomer(customerData);
+            alert('Cliente suspenso!');
+          }
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      setIsLoading(false);
+
+      if (axios.isAxiosError(err)) {
+        const errorAxios = err as AxiosError;
+
+        if (errorAxios.response) {
+          alert('Ops! Não foi possível executar a operação');
+        }
+      }
+    }
+  }, [checkedActiveSuspend, customer]);
 
   useEffect(() => {
     async function loadCustomer() {
@@ -151,11 +201,21 @@ const EditCustomers: React.FC = () => {
                       type="checkbox"
                       name="enabled"
                       id="enabled"
-                      checked={customer.enabled}
+                      defaultChecked={customer.enabled}
+                      onChange={toggleActiveSuspend}
                     />
                     <span>Ativo</span>
                   </label>
                 </ContainerCheckBox>
+
+                <BoxSubscriptionActiveSuspended>
+                  <ButtonChangeEnabledCustomer
+                    onClick={handleActiveSuspendCustomer}
+                  >
+                    Atualizar
+                  </ButtonChangeEnabledCustomer>
+                </BoxSubscriptionActiveSuspended>
+
                 {customer.is_freemason && (
                   <>
                     <ContainerNameText>

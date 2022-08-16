@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { shade } from 'polished';
 
 export const Container = styled.div`
   display: flex;
@@ -84,7 +85,8 @@ export const ContainerCheckBox = styled.div`
   flex: 1;
 
   margin-right: 93%;
-  margin-bottom: 15px;
+  margin-top: 15px;
+  margin-bottom: 25px;
 
   span {
     font-size: 17px;
@@ -95,6 +97,32 @@ export const ContainerCheckBox = styled.div`
   label + label {
     margin-left: 5rem;
   }
+`;
+
+export const BoxSubscriptionActiveSuspended = styled.div`
+  margin-top: -45px;
+  margin-left: -70%;
+  margin-bottom: 20px;
+`;
+
+export const ButtonChangeEnabledCustomer = styled.button`
+  background-color: var(--orange);
+  width: 200%;
+  height: 30px;
+
+  border: 0;
+  border-radius: 10px;
+  color: var(--gray-850);
+  opacity: 1;
+
+  &:hover {
+    background-color: ${shade(0.2, '#ff9000')};
+  }
+  &:disabled {
+    background-color: ${shade(0.2, '#ff9000')};
+  }
+
+  text-transform: uppercase;
 `;
 
 export const ContainerImage = styled.div`

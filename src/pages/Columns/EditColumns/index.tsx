@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useRef,
   useMemo,
+  ChangeEvent,
 } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 
@@ -22,7 +23,9 @@ import {
   Container,
   Content,
   Box,
+  HeaderForm,
   ContentEditor,
+  ContentImage,
   ContainerTitleInput,
   BoxContent,
 } from './styles';
@@ -31,6 +34,7 @@ interface IColumns {
   id: string;
   title: string;
   content: string;
+  image_url: string;
 }
 
 interface IRouteMatchParams {
@@ -64,11 +68,28 @@ const EditColumns: React.FC = () => {
 
   const [columns, setColumns] = useState<IColumns>();
 
+  const [isContentFocus, setIsContentFocus] = useState(true);
+  const [isImageFocus, setIsImageFocus] = useState(false);
+
   const [isLoadingContentSaveButton, setIsLoadingContentSaveButton] =
+    useState(false);
+  const [isLoadingImageColumnSaveButton, setIsLoadingImageColumnSaveButton] =
     useState(false);
 
   const [title, setTitle] = useState('');
   const [contentText, setContentText] = useState('');
+  const [imageColumn, setImageColumn] = useState<File>();
+  const [previewImageColumn, setPreviewImageColumn] = useState('');
+
+  const handleTextFocus = useCallback(() => {
+    setIsContentFocus(true);
+    setIsImageFocus(false);
+  }, []);
+
+  const handleImageColumnFocus = useCallback(() => {
+    setIsContentFocus(false);
+    setIsImageFocus(true);
+  }, []);
 
   const handleSaveContent = useCallback(async () => {
     try {
@@ -93,7 +114,6 @@ const EditColumns: React.FC = () => {
 
         setIsLoadingContentSaveButton(false);
         alert('Coluna alterada com sucesso!');
-        history.goBack();
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -112,7 +132,48 @@ const EditColumns: React.FC = () => {
         }
       }
     }
-  }, [columns_id, contentText, title, updateToken, user.id, history]);
+  }, [columns_id, contentText, title, updateToken, user.id]);
+
+  const handleSelectedImageColumn = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      if (!event.target.files) {
+        return;
+      }
+
+      const image = event.target.files[0];
+      setImageColumn(image);
+
+      setPreviewImageColumn(URL.createObjectURL(image));
+    },
+    [],
+  );
+
+  const handleImageColumnSave = useCallback(async () => {
+    try {
+      setIsLoadingImageColumnSaveButton(true);
+
+      if (!imageColumn) {
+        alert('Selecione uma imagem');
+        setIsLoadingImageColumnSaveButton(false);
+
+        return;
+      }
+
+      if (columns) {
+        const data = new FormData();
+        data.append('id', columns.id);
+        data.append('image', imageColumn);
+
+        await api.patch('/writers_columns/upload', data);
+        setIsLoadingImageColumnSaveButton(false);
+        alert('Imagem salva com sucesso');
+        history.goBack();
+      }
+    } catch (err) {
+      setIsLoadingImageColumnSaveButton(false);
+      alert('Ops! Não foi possível enviar a imagem, tente novamente');
+    }
+  }, [imageColumn, columns, history]);
 
   useEffect(() => {
     document.title = 'Editar coluna';
@@ -130,6 +191,7 @@ const EditColumns: React.FC = () => {
 
           setTitle(columnsData.title);
           setContentText(columnsData.content);
+          setPreviewImageColumn(columnsData.image_url);
         }
       } catch (err) {
         alert('Ops! Não conseguimos encontrar a coluna, tente novamente');
@@ -147,32 +209,80 @@ const EditColumns: React.FC = () => {
         <HeaderContent title="Editar coluna" />
 
         <Box>
-          <ContentEditor>
-            <ContainerTitleInput>
-              <input
-                type="text"
-                placeholder="Título"
-                defaultValue={title}
-                onChange={event => setTitle(event.target.value)}
-              />
-            </ContainerTitleInput>
-
-            <BoxContent>
-              <JoditEditor
-                ref={contentTextRef}
-                value={contentText}
-                config={config}
-                onBlur={content => setContentText(content)}
-              />
-            </BoxContent>
-
-            <Button
-              loading={isLoadingContentSaveButton}
-              onClick={handleSaveContent}
+          <HeaderForm>
+            <button
+              type="button"
+              className={isContentFocus ? 'active' : ''}
+              onClick={handleTextFocus}
             >
-              Salvar conteúdo
-            </Button>
-          </ContentEditor>
+              Conteúdo
+            </button>
+
+            <button
+              type="button"
+              className={isImageFocus ? 'active' : ''}
+              disabled={!columns}
+              onClick={handleImageColumnFocus}
+            >
+              Imagem
+            </button>
+          </HeaderForm>
+
+          {isContentFocus && (
+            <ContentEditor>
+              <ContainerTitleInput>
+                <input
+                  type="text"
+                  placeholder="Título"
+                  defaultValue={title}
+                  onChange={event => setTitle(event.target.value)}
+                />
+              </ContainerTitleInput>
+
+              <BoxContent>
+                <JoditEditor
+                  ref={contentTextRef}
+                  value={contentText}
+                  config={config}
+                  onBlur={content => setContentText(content)}
+                />
+              </BoxContent>
+
+              <Button
+                loading={isLoadingContentSaveButton}
+                onClick={handleSaveContent}
+              >
+                Salvar conteúdo
+              </Button>
+            </ContentEditor>
+          )}
+
+          {isImageFocus && (
+            <ContentImage>
+              <label htmlFor="imageTop">
+                <div className="image-container">
+                  {previewImageColumn && (
+                    <img src={previewImageColumn} alt="Maçom News" />
+                  )}
+
+                  {!previewImageColumn && <p>Selecione uma imagem</p>}
+                </div>
+              </label>
+
+              <input
+                type="file"
+                id="imageTop"
+                onChange={handleSelectedImageColumn}
+              />
+
+              <Button
+                loading={isLoadingImageColumnSaveButton}
+                onClick={handleImageColumnSave}
+              >
+                Salvar imagem
+              </Button>
+            </ContentImage>
+          )}
         </Box>
       </Content>
     </Container>

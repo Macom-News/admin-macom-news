@@ -1,22 +1,35 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 
-import { FiEdit, FiTrash } from 'react-icons/fi';
+import Switch from 'react-switch';
 
 import axios, { AxiosError } from 'axios';
 import { api } from '../../services/api';
 
 import { Header } from '../../components/Header';
 
-import { Container, Content, Table } from './styles';
+import {
+  Container,
+  Content,
+  BoxSubscription,
+  BoxPlanNameText,
+  BoxPlanPriceText,
+  BoxSubscriptionActiveSuspended,
+  BoxSubscriptionActiveSuspendedControl,
+  SubscriptionActiveSuspendedText,
+  ButtonChangeSubscription,
+  BoxDeleteSubscription,
+  ButtonRemoveSubscription,
+  ButtonRemoveSubscriptionText,
+} from './styles';
 import { HeaderContent } from '../../components/HeaderContent';
 
 interface IItem {
   id: string;
   suspended: boolean;
   price_cents: number;
+  price_cents_formatted: string;
   plan_name: string;
-  active: boolean;
 }
 
 interface ISubscription {
@@ -33,135 +46,213 @@ const Subscriptions: React.FC = () => {
   const { params } = useRouteMatch<IRouteMatchParams>();
   const { customer_id } = params;
 
+  const [isLoading, setIsLoading] = useState(false);
   const [subscription, setSubscription] = useState<ISubscription>();
+  const [checkedActiveSuspend, setCheckedActiveSuspend] = useState(false);
 
-  const handleEditSubscriptions = useCallback(
-    async (subscriptions_id: string) => {
-      location.push(`/assinaturas/editar/${subscriptions_id}`);
-    },
-    [location],
-  );
+  // FUNCTIONS
+  const toggleActiveSuspend = useCallback(() => {
+    setCheckedActiveSuspend(oldState => !oldState);
+  }, []);
 
-  const handleDelete = useCallback(async (id: string) => {
+  const handleActiveSuspendSubscription = useCallback(async () => {
     try {
-      const resultConfirm = confirm(`Deseja deletar a assinatura: ${id}`);
+      if (subscription) {
+        setIsLoading(true);
 
-      if (resultConfirm) {
-        const result = await api.delete(`/assinaturas/delete/${id}`);
-
-        if (result.status === 200) {
-          alert(
-            'Operação realizada com sucesso. Em alguns instantes a assinatura será removida.',
+        if (checkedActiveSuspend) {
+          const response = await api.post(
+            `/subscriptions/activate/${subscription.items[0].id}`,
           );
+
+          if (response.status === 200) {
+            const subscriptionCopy = subscription;
+
+            const subscriptionData = response.data;
+
+            subscriptionCopy.items[0] = {
+              ...subscriptionData,
+              price_cents_formatted: new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(subscriptionData.price_cents / 100),
+            };
+
+            setIsLoading(false);
+            setCheckedActiveSuspend(!subscriptionCopy.items[0].suspended);
+            setSubscription(subscriptionCopy);
+            alert('Assinatura ativa!');
+          }
+        } else {
+          const response = await api.post(
+            `/subscriptions/suspend/${subscription.items[0].id}`,
+          );
+
+          if (response.status === 200) {
+            const subscriptionCopy = subscription;
+
+            const subscriptionData = response.data;
+
+            subscriptionCopy.items[0] = {
+              ...subscriptionData,
+              price_cents_formatted: new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(subscriptionData.price_cents / 100),
+            };
+
+            setIsLoading(false);
+            setCheckedActiveSuspend(!subscriptionCopy.items[0].suspended);
+            setSubscription(subscriptionCopy);
+            alert('Assinatura suspensa!');
+          }
         }
       }
     } catch (err) {
+      setIsLoading(false);
+
       if (axios.isAxiosError(err)) {
         const errorAxios = err as AxiosError;
 
         if (errorAxios.response) {
-          if (errorAxios.response.status === 404) {
-            alert(
-              'Já foi enviada a solicitação de exclusão da assinatura. Aguarde alguns instantes até que seja removida da base',
-            );
-
-            return;
-          }
+          alert('Ops! Não foi possível executar a operação');
         }
       }
-
-      alert('Não foi possível deletar a assinatura');
     }
-  }, []);
+  }, [checkedActiveSuspend, subscription]);
+
+  const handleDeleteSubscription = useCallback(async () => {
+    try {
+      if (subscription) {
+        setIsLoading(true);
+
+        const response = await api.delete(
+          `/subscriptions/delete/${subscription.items[0].id}`,
+        );
+
+        if (response.status === 200) {
+          setIsLoading(false);
+
+          alert(
+            'Operação realizada com sucesso! Em breve sua assinatura será cancelada',
+          );
+          location.goBack();
+        }
+      }
+    } catch (err) {
+      setIsLoading(false);
+
+      if (axios.isAxiosError(err)) {
+        const errorAxios = err as AxiosError;
+
+        if (errorAxios.response) {
+          alert('Ops! Não foi possível cancelar sua assinatura');
+        }
+      }
+    }
+  }, [location, subscription]);
 
   useEffect(() => {
-    document.title = 'Assinaturas';
+    document.title = 'Assinatura';
   }, []);
 
   useEffect(() => {
     async function loadSubscriptions() {
       try {
+        setIsLoading(true);
+
         const response = await api.get(`/subscriptions/list/${customer_id}`);
 
         if (response.status === 200) {
-          setSubscription(response.data);
+          const subscriptionData = response.data as ISubscription;
+
+          const subscriptionFormatted = {
+            items: subscriptionData.items.map(item => ({
+              ...item,
+              price_cents_formatted: new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(item.price_cents / 100),
+            })),
+          };
+
+          setIsLoading(false);
+          if (subscriptionFormatted.items.length > 0) {
+            setCheckedActiveSuspend(!subscriptionFormatted.items[0].suspended);
+            setSubscription(subscriptionFormatted);
+          } else {
+            alert('Cliente não possui nenhuma assinatura');
+            location.goBack();
+          }
         }
       } catch (err) {
-        alert('Ops! Algo inesperado ocorreu, tente novamente');
+        setIsLoading(false);
+        if (axios.isAxiosError(err)) {
+          const errorAxios = err as AxiosError;
+
+          if (errorAxios.response) {
+            if (errorAxios.response.status === 404) {
+              alert('Ops! Não foi possível encontrar sua assinatura');
+            }
+          }
+        }
       }
     }
-
     loadSubscriptions();
-  }, [customer_id]);
+  }, [customer_id, location]);
 
   return (
     <Container>
       <Header />
 
-      <Content>
-        <div className="headerContent">
-          <HeaderContent title="Assinatura" />
-        </div>
+      {subscription && subscription.items.length > 0 && (
+        <Content>
+          <div className="headerContent">
+            <HeaderContent title="Assinatura" />
+          </div>
 
-        <Table>
-          {subscription && (
-            <table>
-              <thead>
-                <tr>
-                  <th>Plano</th>
-                  <th>Preço</th>
-                  <th>Ativo</th>
-                  <th>Suspender</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
+          <BoxSubscription>
+            <BoxPlanNameText>{subscription.items[0].plan_name}</BoxPlanNameText>
+            <BoxPlanPriceText>
+              {subscription.items[0].price_cents_formatted}
+            </BoxPlanPriceText>
+          </BoxSubscription>
 
-              <tbody>
-                {subscription.items.map(subscription_item => (
-                  <tr key={subscription_item.id}>
-                    <td>
-                      <p>{subscription_item.plan_name}</p>
-                    </td>
+          <BoxSubscriptionActiveSuspended>
+            <BoxSubscriptionActiveSuspendedControl>
+              <SubscriptionActiveSuspendedText>
+                Ativa
+              </SubscriptionActiveSuspendedText>
 
-                    <td>
-                      {subscription.items.map(price => (
-                        <p key={price.id}>
-                          {new Intl.NumberFormat('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                          }).format(price.price_cents / 100)}
-                        </p>
-                      ))}
-                    </td>
+              <Switch
+                checked={checkedActiveSuspend}
+                onChange={toggleActiveSuspend}
+                onColor="#2693e6"
+                onHandleColor="#0382e4"
+                handleDiameter={20}
+                uncheckedIcon={false}
+                checkedIcon={false}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.4)"
+                activeBoxShadow="0px 0px 1px 5px rgba(0, 0, 0, 0.2)"
+                height={15}
+                width={48}
+              />
+            </BoxSubscriptionActiveSuspendedControl>
 
-                    <td>
-                      <p>{subscription_item.active ? 'Sim' : 'Não'}</p>
-                    </td>
+            <ButtonChangeSubscription onClick={handleActiveSuspendSubscription}>
+              Atualizar
+            </ButtonChangeSubscription>
+          </BoxSubscriptionActiveSuspended>
 
-                    <td>
-                      <button type="button">
-                        <FiEdit
-                          size={20}
-                          onClick={() =>
-                            handleEditSubscriptions(subscription_item.id)
-                          }
-                        />
-                      </button>
-
-                      <button type="button">
-                        <FiTrash
-                          size={20}
-                          onClick={() => handleDelete(subscription_item.id)}
-                        />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </Table>
-      </Content>
+          <BoxDeleteSubscription>
+            <ButtonRemoveSubscription onClick={handleDeleteSubscription}>
+              <ButtonRemoveSubscriptionText>
+                Cancelar assinatura
+              </ButtonRemoveSubscriptionText>
+            </ButtonRemoveSubscription>
+          </BoxDeleteSubscription>
+        </Content>
+      )}
     </Container>
   );
 };
