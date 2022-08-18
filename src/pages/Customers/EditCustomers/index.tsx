@@ -2,8 +2,7 @@ import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 
 import axios, { AxiosError } from 'axios';
-import { FiCamera, FiCameraOff } from 'react-icons/fi';
-import { border } from 'polished';
+import { FiCameraOff } from 'react-icons/fi';
 import { api } from '../../../services/api';
 
 import { Header } from '../../../components/Header';
@@ -69,23 +68,24 @@ const EditCustomers: React.FC = () => {
     setCheckedActiveSuspend(oldState => !oldState);
   }, []);
 
-  useEffect(() => {
-    document.title = 'Informações do cliente';
-  }, []);
-
   const handleActiveSuspendCustomer = useCallback(async () => {
     try {
       if (customer) {
         setIsLoading(true);
 
         if (checkedActiveSuspend) {
-          const response = await api.put(`/customers_profile/${customer.id}`);
+          const response = await api.patch(
+            `/customers_profile/active/${customer.id}`,
+          );
 
           if (response.status === 200) {
+            const customerCopy = customer;
+
             const customerData = response.data;
 
             setIsLoading(false);
-            setCustomer(customerData);
+            setCheckedActiveSuspend(!customer.enabled);
+            setCustomer(customerCopy);
             alert('Cliente ativo!');
           }
         }
@@ -103,6 +103,10 @@ const EditCustomers: React.FC = () => {
       }
     }
   }, [checkedActiveSuspend, customer]);
+
+  useEffect(() => {
+    document.title = 'Informações do cliente';
+  }, []);
 
   useEffect(() => {
     async function loadCustomer() {
@@ -251,16 +255,16 @@ const EditCustomers: React.FC = () => {
                         )}
                       </div>
                     </ContainerImage>
-
-                    <BoxSubscriptionActiveSuspended>
-                      <ButtonChangeEnabledCustomer
-                        onClick={handleActiveSuspendCustomer}
-                      >
-                        Atualizar
-                      </ButtonChangeEnabledCustomer>
-                    </BoxSubscriptionActiveSuspended>
                   </>
                 )}
+
+                <BoxSubscriptionActiveSuspended>
+                  <ButtonChangeEnabledCustomer
+                    onClick={handleActiveSuspendCustomer}
+                  >
+                    Atualizar
+                  </ButtonChangeEnabledCustomer>
+                </BoxSubscriptionActiveSuspended>
               </ContainerInformations>
             </ContentInfo>
           </Box>
