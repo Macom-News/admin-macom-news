@@ -91,7 +91,6 @@ const EditCustomers: React.FC = () => {
         }
       }
     } catch (err) {
-      console.log(err);
       setIsLoading(false);
 
       if (axios.isAxiosError(err)) {
