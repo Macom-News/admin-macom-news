@@ -88,8 +88,8 @@ const EditCustomers: React.FC = () => {
             setCheckedActiveSuspend(!customerCopy.enabled);
             setCustomer(customerCopy);
 
-            console.log(customerCopy.enabled);
-            
+            console.log(customerCopy);
+
             alert('Atualização realizada com sucesso!');
             history.goBack();
           }
