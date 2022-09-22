@@ -57,6 +57,7 @@ interface ICustomer {
 const EditCustomers: React.FC = () => {
   const { params } = useRouteMatch<IRouteMatchParams>();
   const { id } = params;
+  const history = useHistory();
 
   const [isLoading, setIsLoading] = useState(false);
   const [customer, setCustomer] = useState<ICustomer>();
@@ -84,9 +85,10 @@ const EditCustomers: React.FC = () => {
             const customerData = response.data;
 
             setIsLoading(false);
-            setCheckedActiveSuspend(!customer.enabled);
+            setCheckedActiveSuspend(!customerCopy.enabled);
             setCustomer(customerCopy);
             alert('Cliente ativo!');
+            history.goBack();
           }
         }
       }
@@ -101,7 +103,7 @@ const EditCustomers: React.FC = () => {
         }
       }
     }
-  }, [checkedActiveSuspend, customer]);
+  }, [checkedActiveSuspend, customer, history]);
 
   useEffect(() => {
     document.title = 'Informações do cliente';
