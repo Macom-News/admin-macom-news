@@ -80,15 +80,13 @@ const EditCustomers: React.FC = () => {
           );
 
           if (response.status === 200) {
-            const customerCopy = customer;
+            // const customerCopy = customer;
 
             const customerData = response.data;
 
             setIsLoading(false);
-            setCheckedActiveSuspend(!customerCopy.enabled);
-            setCustomer(customerCopy);
-
-            console.log(customer);
+            // setCheckedActiveSuspend(!customerCopy.enabled);
+            setCustomer(customerData);
 
             alert('Atualização realizada com sucesso!');
             history.goBack();
@@ -221,17 +219,17 @@ const EditCustomers: React.FC = () => {
                     </ContainerNameText>
 
                     <ContainerNameText>
-                      Empório
+                      Loja
                       <p>{customer.emporium}</p>
                     </ContainerNameText>
 
                     <ContainerNameText>
-                      Descrição Empório
+                      Descrição
                       <p>{customer.description_task_emporium}</p>
                     </ContainerNameText>
 
                     <ContainerNameText>
-                      Cidade Empório
+                      Cidade
                       <p>{customer.city_emporium}</p>
                     </ContainerNameText>
 
@@ -241,8 +239,13 @@ const EditCustomers: React.FC = () => {
                     </ContainerNameText>
 
                     <ContainerNameText>
-                      Whatsapp Empório
+                      Whatsapp do venerável mestre
                       <p>{customer.whatsapp_master_emporium}</p>
+                    </ContainerNameText>
+
+                    <ContainerNameText>
+                      Instagram
+                      <p>{customer.instagram}</p>
                     </ContainerNameText>
 
                     <ContainerImage>
