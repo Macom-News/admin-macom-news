@@ -50,8 +50,13 @@ import { EditPlan } from '../pages/Plans/EditPlan';
 // ASSINATURAS
 import { Subscriptions } from '../pages/Subscriptions';
 
+// NOTIFICATIONS
+import { Notifications } from '../pages/Notifications';
+
 // TERMS
 import { TermsOfUse } from '../pages/TermOfUse';
+import { CreateNotifications } from '../pages/Notifications/CreateNotifications';
+import { CreateNotificationsDate } from '../pages/Notifications/CreateNotificationsDate';
 
 const Routes: React.FC = () => (
   <Switch>
@@ -111,6 +116,18 @@ const Routes: React.FC = () => (
     <Route
       path="/assinaturas/editar/:customer_id+"
       component={Subscriptions}
+      isPrivate
+    />
+
+    <Route path="/notificacoes" exact component={Notifications} isPrivate />
+    <Route
+      path="/notificacoes/criar"
+      component={CreateNotifications}
+      isPrivate
+    />
+    <Route
+      path="/notificacoesAgendadas/criar"
+      component={CreateNotificationsDate}
       isPrivate
     />
   </Switch>

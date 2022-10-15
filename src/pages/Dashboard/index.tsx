@@ -61,6 +61,13 @@ const Dashboard: React.FC = () => {
               <h2>Colunas</h2>
             </Box>
           </Link>
+
+          <Link to="/notificacoes">
+            <Box>
+              <FiTrello size={30} />
+              <h2>Notificações</h2>
+            </Box>
+          </Link>
         </GridLayout>
       </Content>
     </Container>
