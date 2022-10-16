@@ -70,7 +70,7 @@ const News: React.FC = () => {
       setIdNewsDelete(newsItem);
       try {
         const resultConfirm = confirm(
-          `Deseja deletar a notícia: ${newsItem.title}?`,
+          `Deseja deletar a matéria: ${newsItem.title}?`,
         );
 
         if (resultConfirm) {
@@ -107,7 +107,7 @@ const News: React.FC = () => {
   );
 
   useEffect(() => {
-    document.title = 'Editar notícia';
+    document.title = 'Matérias';
   }, []);
 
   useEffect(() => {

@@ -110,7 +110,7 @@ const CreateNews: React.FC = () => {
       const infoLevelData = levelNews.toUpperCase();
 
       if (title === '') {
-        alert('Informe o título da notícia');
+        alert('Informe o título da matéria');
         setIsLoadingContentSaveButton(false);
       } else if (publicationScheduleDate === '') {
         alert('Informe a data de publicação');
@@ -118,11 +118,11 @@ const CreateNews: React.FC = () => {
       } else if (infoLevelData !== 'GERAL') {
         if (Number.isNaN(infoLevelData)) {
           alert(
-            'Nível da notícia incorreto. Informe Geral ou um número representando o nível',
+            'Nível da matéria incorreto. Informe Geral ou um número representando o nível',
           );
           setIsLoadingContentSaveButton(false);
         } else if (content1 === '') {
-          alert('Informe o conteúdo da notícia');
+          alert('Informe o conteúdo da matéria');
           setIsLoadingContentSaveButton(false);
         } else {
           const level = infoLevelData === 'GERAL' ? 0 : Number(infoLevelData);
@@ -142,7 +142,7 @@ const CreateNews: React.FC = () => {
           setIsLoadingContentSaveButton(false);
         }
       } else if (content1 === '') {
-        alert('Informe o conteúdo da notícia');
+        alert('Informe o conteúdo da matéria');
         setIsLoadingContentSaveButton(false);
       } else {
         const level = infoLevelData === 'GERAL' ? 0 : Number(infoLevelData);
@@ -270,7 +270,7 @@ const CreateNews: React.FC = () => {
   }, [imageMiddle, news]);
 
   useEffect(() => {
-    document.title = 'Cadastrar notícia';
+    document.title = 'Cadastrar matéria';
   }, []);
 
   return (
@@ -278,7 +278,7 @@ const CreateNews: React.FC = () => {
       <Header />
 
       <Content>
-        <HeaderContent title="Cadastrar notícia" />
+        <HeaderContent title="Cadastrar matéria" />
 
         <Box>
           <HeaderForm>
@@ -339,7 +339,7 @@ const CreateNews: React.FC = () => {
               <ContainerLevelInput>
                 <input
                   type="text"
-                  placeholder="Nível a qual a notícia se destina"
+                  placeholder="Nível a qual a matéria se destina"
                   value={levelNews}
                   disabled={!!news}
                   onChange={event => setLevelNews(event.target.value)}

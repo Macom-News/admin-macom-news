@@ -121,7 +121,7 @@ const EditNews: React.FC = () => {
       const infoLevelData = levelNews.toUpperCase();
 
       if (title === '') {
-        alert('Informe o título da notícia');
+        alert('Informe o título da matéria');
         setIsLoadingContentSaveButton(false);
       } else if (publicationScheduleDate === '') {
         alert('Informe a data de publicação');
@@ -129,36 +129,12 @@ const EditNews: React.FC = () => {
       } else if (infoLevelData !== 'GERAL') {
         if (Number.isNaN(infoLevelData)) {
           alert(
-            'Nível da notícia incorreto. Informe Geral ou um número representando o nível',
+            'Nível da matéria incorreto. Informe Geral ou um número representando o nível',
           );
-          setIsLoadingContentSaveButton(false);
-        } else if (content1 === '') {
-          alert('Informe o conteúdo da notícia');
-          setIsLoadingContentSaveButton(false);
-        } else {
-          const level = infoLevelData === 'GERAL' ? 0 : Number(infoLevelData);
-
-          const data = {
-            id: news_id,
-            title,
-            content_1: content1,
-            content_2: content2 || null,
-            user_id: user.id,
-            publication_schedule_date: publicationScheduleDate,
-            level,
-          };
-
-          const response = await api.put('/news', data);
-
-          if (response.status === 200) {
-            setNews(response.data);
-            alert('Informações atualizadas');
-          }
-
           setIsLoadingContentSaveButton(false);
         }
       } else if (content1 === '') {
-        alert('Informe o conteúdo da notícia');
+        alert('Informe o conteúdo da matéria');
         setIsLoadingContentSaveButton(false);
       } else {
         const level = infoLevelData === 'GERAL' ? 0 : Number(infoLevelData);
@@ -184,6 +160,8 @@ const EditNews: React.FC = () => {
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
+        setIsLoadingContentSaveButton(false);
+
         const errorAxios = err as AxiosError;
 
         if (errorAxios.response) {
@@ -195,6 +173,10 @@ const EditNews: React.FC = () => {
             if (successRefreshToken) {
               await handleSaveContent();
             }
+          } else if (statusCode === 400) {
+            alert(
+              'Não foi possível editar esta matéria, pois você não é o autor',
+            );
           }
         }
       }
@@ -309,7 +291,7 @@ const EditNews: React.FC = () => {
   }, [imageMiddle, news]);
 
   useEffect(() => {
-    document.title = 'Editar notícia';
+    document.title = 'Editar matéria';
   }, []);
 
   useEffect(() => {
@@ -335,7 +317,7 @@ const EditNews: React.FC = () => {
           setPreviewImageMiddle(newsData.image_2_url);
         }
       } catch (err) {
-        alert('Ops! Não conseguimos encontrar a notícia, tente novamente');
+        alert('Ops! Não conseguimos encontrar a matéria, tente novamente');
       }
     }
 
@@ -347,7 +329,7 @@ const EditNews: React.FC = () => {
       <Header />
 
       <Content>
-        <HeaderContent title="Editar notícia" />
+        <HeaderContent title="Editar matéria" />
 
         <Box>
           <HeaderForm>
@@ -400,7 +382,7 @@ const EditNews: React.FC = () => {
               <ContainerLevelInput>
                 <input
                   type="text"
-                  placeholder="Nível a qual a notícia se destina"
+                  placeholder="Nível a qual a matéria se destina"
                   value={levelNews}
                   onChange={event => setLevelNews(event.target.value)}
                 />
