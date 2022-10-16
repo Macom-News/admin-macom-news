@@ -35,7 +35,7 @@ const Dashboard: React.FC = () => {
               <Link to="/noticias">
                 <Box>
                   <FiTrello size={30} />
-                  <h2>Notícias</h2>
+                  <h2>Matérias</h2>
                 </Box>
               </Link>
 
