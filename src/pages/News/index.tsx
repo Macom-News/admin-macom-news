@@ -190,7 +190,7 @@ const News: React.FC = () => {
 
       <Content>
         <div className="headerContent">
-          <HeaderContent title="Notícias" />
+          <HeaderContent title="Matérias" />
 
           <ContainerInput>
             <FiSearch size={20} color="#FFFFFF" />
