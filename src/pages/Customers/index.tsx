@@ -8,6 +8,7 @@ import { api } from '../../services/api';
 
 import { Header } from '../../components/Header';
 import { HeaderContent } from '../../components/HeaderContent';
+import { Pagination } from '../../components/Pagination';
 
 import {
   Container,
@@ -31,6 +32,7 @@ const Customers: React.FC = () => {
   const [customers, setCustomers] = useState<ICustomer[]>([]);
   const [searchCustomers, setSearchCustomers] = useState<ICustomer[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleSearch = useCallback(
     (term: string) => {
@@ -72,7 +74,11 @@ const Customers: React.FC = () => {
   useEffect(() => {
     async function loadCustomers() {
       try {
-        const response = await api.get('/customers');
+        const response = await api.get('/customers', {
+          params: {
+            page: currentPage,
+          },
+        });
 
         setCustomers(response.data);
         setSearchCustomers(response.data);
@@ -82,7 +88,7 @@ const Customers: React.FC = () => {
     }
 
     loadCustomers();
-  }, []);
+  }, [currentPage]);
 
   return (
     <Container>
@@ -157,6 +163,12 @@ const Customers: React.FC = () => {
             </tbody>
           </table>
         </Table>
+
+        <Pagination
+          totalCountOfRegisters={100}
+          currentPage={currentPage}
+          onPageChange={page => setCurrentPage(page)}
+        />
       </Content>
     </Container>
   );
