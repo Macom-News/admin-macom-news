@@ -82,7 +82,7 @@ const Customers: React.FC = () => {
           },
         });
 
-        console.log(response.headers['x-total-count-pages']);
+        setTotalCustomers(Number(response.headers['x-total-count-pages']));
 
         setCustomers(response.data);
         setSearchCustomers(response.data);
@@ -172,7 +172,7 @@ const Customers: React.FC = () => {
         </Table>
 
         <Pagination
-          totalCountOfRegisters={100}
+          totalCountOfRegisters={totalCustomers}
           currentPage={currentPage}
           onPageChange={page => setCurrentPage(page)}
         />
