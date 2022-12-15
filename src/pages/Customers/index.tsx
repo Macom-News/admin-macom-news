@@ -14,6 +14,7 @@ import {
   Container,
   Content,
   ContainerInput,
+  BoxCountCustomer,
   Table,
   CenterParagraph,
 } from './styles';
@@ -32,6 +33,7 @@ const Customers: React.FC = () => {
   const [customers, setCustomers] = useState<ICustomer[]>([]);
   const [searchCustomers, setSearchCustomers] = useState<ICustomer[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [totalCustomers, setTotalCustomers] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
 
   const handleSearch = useCallback(
@@ -80,6 +82,8 @@ const Customers: React.FC = () => {
           },
         });
 
+        console.log(response.headers['x-total-count-pages']);
+
         setCustomers(response.data);
         setSearchCustomers(response.data);
       } catch (err) {
@@ -111,6 +115,9 @@ const Customers: React.FC = () => {
           </ContainerInput>
         </div>
 
+        <BoxCountCustomer>
+          <span />
+        </BoxCountCustomer>
         <Table>
           <table>
             <thead>

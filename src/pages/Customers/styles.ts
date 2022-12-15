@@ -68,6 +68,14 @@ export const ContainerInput = styled.div`
   }
 `;
 
+export const BoxCountCustomer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
 export const Table = styled.div`
   width: 100%;
 
