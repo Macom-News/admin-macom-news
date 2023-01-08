@@ -6,10 +6,18 @@ export const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
 
   margin-bottom: 20px;
 `;
+
+export const TotalItensPerPageAndTotalItens = styled.span`
+  font-size: 1.825rem;
+  font-weight: bold;
+  color: var(--gray-300);
+`;
+
+export const BoxPageNumerations = styled.div``;
 
 export const Text = styled.span`
   width: 3.5rem;

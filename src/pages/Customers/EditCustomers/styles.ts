@@ -107,7 +107,7 @@ export const BoxSubscriptionActiveSuspended = styled.div`
 
 export const ButtonChangeEnabledCustomer = styled.button`
   background-color: var(--orange);
-  width: 350px;
+  width: 250px;
   height: 40px;
 
   border: 0;
@@ -123,6 +123,28 @@ export const ButtonChangeEnabledCustomer = styled.button`
   }
 
   text-transform: uppercase;
+`;
+
+export const ButtonResetPasswordCustomer = styled.button`
+  background-color: var(--red);
+  width: 250px;
+  height: 40px;
+
+  border: 0;
+  border-radius: 10px;
+  color: var(--white);
+  opacity: 1;
+
+  &:hover {
+    background-color: ${shade(0.2, '#c53030')};
+  }
+  &:disabled {
+    background-color: ${shade(0.2, '#c53030')};
+  }
+
+  text-transform: uppercase;
+
+  margin-left: 10px;
 `;
 
 export const ContainerImage = styled.div`

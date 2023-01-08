@@ -2,7 +2,12 @@ import { useMemo, useCallback } from 'react';
 
 import { PaginationItem } from './PaginationItem';
 
-import { Container, Text } from './styles';
+import {
+  Container,
+  TotalItensPerPageAndTotalItens,
+  BoxPageNumerations,
+  Text,
+} from './styles';
 
 interface IPaginationProps {
   totalCountOfRegisters: number;
@@ -21,8 +26,20 @@ const Pagination = ({
 }: IPaginationProps) => {
   const lastPage = useMemo(() => {
     // vai arredondar sempre para cima
-    return Math.floor(totalCountOfRegisters / registersPerPage);
+    return Math.ceil(totalCountOfRegisters / registersPerPage);
   }, [registersPerPage, totalCountOfRegisters]);
+
+  const itemFirstPosition = useMemo(() => {
+    if (currentPage === 1) {
+      return 1;
+    }
+
+    return currentPage * registersPerPage - registersPerPage + 1;
+  }, [currentPage, registersPerPage]);
+
+  const itemLastPosition = useMemo(() => {
+    return currentPage * registersPerPage;
+  }, [currentPage, registersPerPage]);
 
   const generatePagesArray = useCallback((from: number, to: number) => {
     return [...new Array(to - from)]
@@ -47,53 +64,61 @@ const Pagination = ({
 
   return (
     <Container>
-      {/* mostrar a primeira página */}
-      {currentPage > 1 + siblingsCount && (
-        <>
-          <PaginationItem number={1} onPageChange={onPageChange} />
+      <TotalItensPerPageAndTotalItens>
+        <strong>{itemFirstPosition}</strong> -{' '}
+        <strong>{itemLastPosition}</strong> de{' '}
+        <strong>{totalCountOfRegisters}</strong>
+      </TotalItensPerPageAndTotalItens>
 
-          {currentPage > 2 + siblingsCount && <Text>...</Text>}
-        </>
-      )}
+      <BoxPageNumerations>
+        {/* mostrar a primeira página */}
+        {currentPage > 1 + siblingsCount && (
+          <>
+            <PaginationItem number={1} onPageChange={onPageChange} />
 
-      {/* páginas anteriores */}
-      {previousPages.length > 0 &&
-        previousPages.map(page => {
-          return (
-            <PaginationItem
-              key={page}
-              number={page}
-              onPageChange={onPageChange}
-            />
-          );
-        })}
+            {currentPage > 2 + siblingsCount && <Text>...</Text>}
+          </>
+        )}
 
-      <PaginationItem
-        isCurrent
-        number={currentPage}
-        onPageChange={onPageChange}
-      />
+        {/* páginas anteriores */}
+        {previousPages.length > 0 &&
+          previousPages.map(page => {
+            return (
+              <PaginationItem
+                key={page}
+                number={page}
+                onPageChange={onPageChange}
+              />
+            );
+          })}
 
-      {/* próximas páginas */}
-      {nextPages.length > 0 &&
-        nextPages.map(page => {
-          return (
-            <PaginationItem
-              key={page}
-              number={page}
-              onPageChange={onPageChange}
-            />
-          );
-        })}
+        <PaginationItem
+          isCurrent
+          number={currentPage}
+          onPageChange={onPageChange}
+        />
 
-      {/* mostrar a última página */}
-      {currentPage + siblingsCount < lastPage && (
-        <>
-          {currentPage + 1 + siblingsCount < lastPage && <Text>...</Text>}
+        {/* próximas páginas */}
+        {nextPages.length > 0 &&
+          nextPages.map(page => {
+            return (
+              <PaginationItem
+                key={page}
+                number={page}
+                onPageChange={onPageChange}
+              />
+            );
+          })}
 
-          <PaginationItem number={lastPage} onPageChange={onPageChange} />
-        </>
-      )}
+        {/* mostrar a última página */}
+        {currentPage + siblingsCount < lastPage && (
+          <>
+            {currentPage + 1 + siblingsCount < lastPage && <Text>...</Text>}
+
+            <PaginationItem number={lastPage} onPageChange={onPageChange} />
+          </>
+        )}
+      </BoxPageNumerations>
     </Container>
   );
 };

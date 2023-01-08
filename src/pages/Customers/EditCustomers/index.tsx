@@ -2,7 +2,11 @@ import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 
 import axios, { AxiosError } from 'axios';
+
 import { FiCameraOff } from 'react-icons/fi';
+
+import { generateRandomString } from '../../../utils/Utils';
+
 import { api } from '../../../services/api';
 
 import { Header } from '../../../components/Header';
@@ -19,6 +23,7 @@ import {
   ContainerImage,
   BoxSubscriptionActiveSuspended,
   ButtonChangeEnabledCustomer,
+  ButtonResetPasswordCustomer,
 } from './styles';
 
 interface IRouteMatchParams {
@@ -105,6 +110,19 @@ const EditCustomers: React.FC = () => {
       }
     }
   }, [checkedActiveSuspend, customer, history]);
+
+  const handleQuestionResetPassword = useCallback(() => {
+    const responseResetPassword = confirm('Deseja resetar a senha?');
+
+    if (responseResetPassword) {
+      if (customer) {
+        const randomPassword = generateRandomString(5);
+        alert(`${randomPassword} ${customer.id}`);
+      }
+    } else {
+      alert('não');
+    }
+  }, [customer]);
 
   useEffect(() => {
     document.title = 'Informações do cliente';
@@ -271,6 +289,12 @@ const EditCustomers: React.FC = () => {
                   >
                     Atualizar
                   </ButtonChangeEnabledCustomer>
+
+                  <ButtonResetPasswordCustomer
+                    onClick={handleQuestionResetPassword}
+                  >
+                    Resetar senha
+                  </ButtonResetPasswordCustomer>
                 </BoxSubscriptionActiveSuspended>
               </ContainerInformations>
             </ContentInfo>
