@@ -64,11 +64,11 @@ const Pagination = ({
 
   return (
     <Container>
-      <TotalItensPerPageAndTotalItens>
+      {/* <TotalItensPerPageAndTotalItens>
         <strong>{itemFirstPosition}</strong> -{' '}
         <strong>{itemLastPosition}</strong> de{' '}
         <strong>{totalCountOfRegisters}</strong>
-      </TotalItensPerPageAndTotalItens>
+      </TotalItensPerPageAndTotalItens> */}
 
       <BoxPageNumerations>
         {/* mostrar a primeira página */}

@@ -111,16 +111,33 @@ const EditCustomers: React.FC = () => {
     }
   }, [checkedActiveSuspend, customer, history]);
 
-  const handleQuestionResetPassword = useCallback(() => {
-    const responseResetPassword = confirm('Deseja resetar a senha?');
+  const handleQuestionResetPassword = useCallback(async () => {
+    const confirmResetPassword = confirm('Deseja resetar a senha?');
 
-    if (responseResetPassword) {
+    if (confirmResetPassword) {
       if (customer) {
-        const randomPassword = generateRandomString(5);
-        alert(`${randomPassword} ${customer.id}`);
+        try {
+          const randomPassword = generateRandomString(5);
+
+          const data = {
+            id: customer.id,
+            password: randomPassword.trim(),
+          };
+
+          const responseResetPassword = await api.patch(
+            '/customers_profile/reset_password',
+            data,
+          );
+
+          if (responseResetPassword.status === 200) {
+            const message = `Senha foi atualizada.\nA nova senha: ${randomPassword}`;
+
+            alert(message);
+          }
+        } catch (err) {
+          alert('Não foi possível atualizar a senha');
+        }
       }
-    } else {
-      alert('não');
     }
   }, [customer]);
 

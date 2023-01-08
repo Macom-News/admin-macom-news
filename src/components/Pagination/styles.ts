@@ -17,7 +17,11 @@ export const TotalItensPerPageAndTotalItens = styled.span`
   color: var(--gray-300);
 `;
 
-export const BoxPageNumerations = styled.div``;
+export const BoxPageNumerations = styled.div`
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+`;
 
 export const Text = styled.span`
   width: 3.5rem;
