@@ -42,6 +42,11 @@ import { Interviews } from '../pages/Interviews';
 import { CreateInterviews } from '../pages/Interviews/CreateInterviews';
 import { EditInterviews } from '../pages/Interviews/EditInterviews';
 
+// ESOTERIC ORDERS
+import { EsotericOrders } from '../pages/EsotericOrders';
+import { CreateEsotericOrder } from '../pages/EsotericOrders/CreateEsotericOrder';
+import { EditEsotericOrder } from '../pages/EsotericOrders/EditEsotericOrder';
+
 // PLANS
 import { Plans } from '../pages/Plans';
 import { CreatePlan } from '../pages/Plans/CreatePlan';
@@ -106,6 +111,23 @@ const Routes: React.FC = () => (
     <Route
       path="/entrevistas/editar/:interviews_id+"
       component={EditInterviews}
+      isPrivate
+    />
+
+    <Route
+      path="/ordens_esotericas"
+      exact
+      component={EsotericOrders}
+      isPrivate
+    />
+    <Route
+      path="/ordens_esotericas/criar"
+      component={CreateEsotericOrder}
+      isPrivate
+    />
+    <Route
+      path="/ordens_esotericas/editar/:ordem_id+"
+      component={EditEsotericOrder}
       isPrivate
     />
 

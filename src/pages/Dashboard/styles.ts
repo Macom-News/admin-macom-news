@@ -19,6 +19,8 @@ export const Content = styled.div`
   padding-inline-start: 6rem;
   padding-inline-end: 6rem;
 
+  padding-bottom: 6rem;
+
   display: flex;
 `;
 

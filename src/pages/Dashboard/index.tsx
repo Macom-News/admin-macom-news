@@ -52,6 +52,13 @@ const Dashboard: React.FC = () => {
                   <h2>Entrevistas</h2>
                 </Box>
               </Link>
+
+              <Link to="/ordens_esotericas">
+                <Box>
+                  <FiTrello size={30} />
+                  <h2>Ordens Esotéricas</h2>
+                </Box>
+              </Link>
             </>
           )}
 
